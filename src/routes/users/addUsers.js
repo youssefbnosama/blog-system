@@ -41,6 +41,7 @@ const registValidation = [
 ];
 router.post("/api/register", registValidation, async (req, res) => {
   try {
+    console.log("hello")
     const errors = validationResult(req);
     if (!errors.isEmpty())
       return res.status(400).json({ success: false, data: errors.array() });
