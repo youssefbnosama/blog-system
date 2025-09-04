@@ -7,26 +7,15 @@ const postSchema = new mongoose.Schema(
       ref: "User", // اسم الـ model بتاع اليوزر
       required: true,
     },
-    value: {
+    body: {
       type: String,
       required: true,
       trim: true,
     },
-    commentsArray: {
-      type: [String], // ممكن تخليها array من objects لو عايز تفاصيل أكتر
-      default: [],
-    },
-    likesArray: {
-      type: [String], // ممكن تخليها array من objects لو عايز تفاصيل أكتر
-      default: [],
-    },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    comments: {
-      type: Number,
-      default: 0,
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   { timestamps: true } // ده بيضيف createdAt و updatedAt

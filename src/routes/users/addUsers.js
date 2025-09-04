@@ -3,6 +3,8 @@ import { Router } from "express";
 import { body, validationResult } from "express-validator";
 import userSchema from "../../schemas/userSchema.js";
 import { hashing } from "./hash.js";
+import {tryCatch} from "../../utilities/tryAndCatch.js";
+import AppError from "../../utilities/classError.js";
 //assign
 const router = Router();
 
@@ -39,20 +41,19 @@ const registValidation = [
     .bail()
     .normalizeEmail(),
 ];
-router.post("/api/register", registValidation, async (req, res) => {
-  try {
-    console.log("hello")
+router.post("/api/register", registValidation,tryCatch(async (req, res,next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, data: errors.array() });
+    if (!errors.isEmpty()) {
+      const message = errors.array().map(err => err.msg).join(", ");
+      return next(new AppError(400,message,true,req.path,req.method))
+    }
+      // return res.status(400).json({ success: false, data: errors.array() });
+  
     let { body } = req;
     body.password = await hashing(body.password);
     const newUser = new userSchema(body);
     const savedUser = await newUser.save();
     res.status(201).json({ success: true, data: newUser });
-  } catch (err) {
-    res.status(500).json({ errors: err });
-  }
-});
+}) );
 
 export default router;

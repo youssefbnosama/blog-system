@@ -1,17 +1,18 @@
 import { Router } from "express";
 import likeSchema from "../../schemas/likeSchema.js";
+import { tryCatch } from "../../utilities/tryAndCatch.js";
+import AppError from "../../utilities/classError.js";
 const router = Router();
 
-router.post("/api/users/posts/:postId/togglelike", async (req, res) => {
-  try {
+router.post("/api/users/posts/:postId/togglelike",tryCatch(async (req, res,next) => {
     const {
       body,
       user,
       user: { id },
       params: { postId },
     } = req;
-    if (!user)
-      res.status(404).json({ success: false, error: "You must logIn" });
+    if (!user) return next(new AppError(401,"You have to sign in",true,req.path,req.method))
+      // res.status(404).json({ success: false, error: "You must logIn" });
     let theLike = await likeSchema.findOne({ postId: postId, userId: id });
     if (!theLike) {
       let newLike = new likeSchema({ ...body, postId: postId, userId: id });
@@ -24,10 +25,6 @@ router.post("/api/users/posts/:postId/togglelike", async (req, res) => {
       await likeSchema.deleteOne({ postId: postId, userId: id });
     return  res.status(200).json({ success: true });
     }
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err);
-  }
-});
+}));
 
 export default router;
