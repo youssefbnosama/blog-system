@@ -65,5 +65,28 @@ router.post(
     res.json({ message: "Logged in successfully" });
   })
 );
-
+router.get("/api/refreshToken", async (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.status(401).send("Not found");  
+  try {
+    const decoded = jwt.decode(
+      refreshToken,
+      process.env.REFRESH_SECRET_JWT_KEY
+    );
+    const newAccessToken = jwt.sign(
+      { id: decoded.id, username: decoded.username },
+      process.env.SECRET_JWT_KEY,
+      { expiresIn: "15m" }
+    );
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+    res.json({ message: "Access token refreshed" });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+});
 export default router;
