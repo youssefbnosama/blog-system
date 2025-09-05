@@ -16,22 +16,6 @@ import cookieParser from "cookie-parser";
 const app = express();
 app.use(express.json());
 app.use(cookieParser())
-app.use(
-  session({
-    secret: "youssefBnOsamaIsEnough",
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: "mongodb://127.0.0.1:27017/blogsystem",
-      collectionName: "sessions",
-    }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
-    },
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
 mongoose
 .connect("mongodb://127.0.0.1:27017/blogsystem", {
   useNewUrlParser: true,
