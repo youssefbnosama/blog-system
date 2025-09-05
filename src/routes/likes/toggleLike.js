@@ -2,16 +2,15 @@ import { Router } from "express";
 import likeSchema from "../../schemas/likeSchema.js";
 import { tryCatch } from "../../utilities/tryAndCatch.js";
 import AppError from "../../utilities/classError.js";
+import {authMiddleware} from "../../utilities/tokenMiddles.js"
 const router = Router();
 
-router.post("/api/users/posts/:postId/togglelike",tryCatch(async (req, res,next) => {
+router.post("/api/posts/:postId/togglelike",authMiddleware,tryCatch(async (req, res,next) => {
     const {
       body,
-      user,
       user: { id },
-      params: { postId },
     } = req;
-    if (!user) return next(new AppError(401,"You have to sign in",true,req.path,req.method))
+    // if (!user) return next(new AppError(401,"You have to sign in",true,req.path,req.method))
       // res.status(404).json({ success: false, error: "You must logIn" });
     let theLike = await likeSchema.findOne({ postId: postId, userId: id });
     if (!theLike) {

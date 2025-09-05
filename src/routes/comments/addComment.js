@@ -3,22 +3,10 @@ import postSchema from "../../schemas/postSchema.js";
 import commentSchema from "../../schemas/commentSchema.js";
 import { tryCatch } from "../../utilities/tryAndCatch.js";
 import AppError from "../../utilities/classError.js";
+import { authMiddleware } from "../../utilities/tokenMiddles.js";
 const router = Router();
 
-// async function  userMatch(req, res, next) {
-//   try {
-//     if (!req.user)
-//       return res.status(403).json({ success: false, error: "Unauthorized!" });
-//     next();
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json(err);
-//   }
-// }
-const userMatch = tryCatch(async(req,res,next)=>{
-   if (!req.user) return next(new AppError(403,"User doesn't match",true,req.path,req.method));
-   next()
-})
+
 // async function postExists(req, res, next) {
 //   try {
 //     const {
@@ -46,8 +34,8 @@ const postExists = tryCatch(async(req,res,next)=>{
     next();
 })
 router.post(
-  "/api/users/posts/:postid/addcomment",
-  userMatch,
+  "/api/posts/:postid/addcomment",
+  authMiddleware,
   postExists,
  tryCatch(async (req, res) => {
       const newComment = new commentSchema({

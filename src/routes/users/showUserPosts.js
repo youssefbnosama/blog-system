@@ -2,7 +2,7 @@ import { Router } from "express";
 import userSchema from "../../schemas/userSchema.js";
 import mongoose from "mongoose";
 import {tryCatch} from "../../utilities/tryAndCatch.js";
-import  AppError from "../../utilities/classError.js"
+import  AppError from "../../utilities/classError.js";
 const router = Router();
 
 router.get("/api/users/:id/posts",tryCatch(async (req, res,next) => {

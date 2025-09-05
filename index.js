@@ -11,9 +11,11 @@ import config from "./src/utilities/config.js";
 import { errorHandler } from "./src/utilities/appErrorHandler.js";
 import { tryCatch } from "./src/utilities/tryAndCatch.js";
 import AppError from "./src/utilities/classError.js";
-const app = express();
+import cookieParser from "cookie-parser";
 
+const app = express();
 app.use(express.json());
+app.use(cookieParser())
 app.use(
   session({
     secret: "youssefBnOsamaIsEnough",
